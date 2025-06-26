@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Grazie!</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Cinzel:wght@400;500;600&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0a1a1a 0%, #1a3a3a 50%, #0f2f2f 100%);
+      color: #e0f2f1;
+      font-family: 'Crimson Text', serif;
+      min-height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+      position: relative;
+    }
+
+    h1 {
+      font-size: 3rem;
+      color: #4db6ac;
+      font-family: 'Playfair Display', serif;
+      text-shadow: 0 0 20px #4db6ac, 0 0 40px #4db6ac;
+      animation: glow 3s ease-in-out infinite alternate;
+      margin-bottom: 20px;
+    }
+
+    p {
+      font-size: 1.5rem;
+      color: #80cbc4;
+      margin-bottom: 40px;
+      animation: fadeInUp 2s ease-out;
+    }
+
+    .btn-home {
+      padding: 15px 30px;
+      background: linear-gradient(45deg, #4db6ac, #80cbc4);
+      border: none;
+      border-radius: 8px;
+      color: #0a1a1a;
+      font-size: 1.2rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Cinzel', serif;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      animation: fadeInUp 2.5s ease-out;
+    }
+
+    .btn-home:hover {
+      background: linear-gradient(45deg, #80cbc4, #4db6ac);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(77, 182, 172, 0.4);
+    }
+
+    .floating-particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .particle {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: #4db6ac;
+      border-radius: 50%;
+      animation: float 15s infinite linear;
+      opacity: 0.6;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+    }
+
+    @keyframes glow {
+      from { text-shadow: 0 0 20px #4db6ac, 0 0 30px #4db6ac; }
+      to { text-shadow: 0 0 10px #4db6ac, 0 0 40px #4db6ac; }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2.2rem;
+      }
+
+      p {
+        font-size: 1.2rem;
+      }
+
+      .btn-home {
+        font-size: 1rem;
+        padding: 12px 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="floating-particles"></div>
+
+  <main>
+    <h1>Grazie per il tuo messaggio!</h1>
+    <p>La tua storia è stata ricevuta. Le Custodi delle Ombre la leggeranno con attenzione.</p>
+    <a href="index.html" class="btn-home">Torna alla Home</a>
+  </main>
+
+  <script>
+    // Crea particelle fluttuanti
+    function createFloatingParticles() {
+      const container = document.querySelector('.floating-particles');
+      const particleCount = 60;
+
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 15 + 's';
+        particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+        container.appendChild(particle);
+      }
+    }
+
+    window.addEventListener('load', createFloatingParticles);
+  </script>
+</body>
+</html>
