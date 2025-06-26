@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whispers in the Shadows</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Cinzel:wght@400;500;600&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a1a1a 0%, #1a3a3a 50%, #0f2f2f 100%);
+            color: #e0f2f1;
+            font-family: 'Crimson Text', serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        .floating-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #4db6ac;
+            border-radius: 50%;
+            animation: float 15s infinite linear;
+            opacity: 0.6;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+        
+        header {
+            text-align: center;
+            padding: 60px 20px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .title {
+            font-family: 'Playfair Display', serif;
+            font-size: 4rem;
+            font-weight: 700;
+            color: #4db6ac;
+            text-shadow: 0 0 20px #4db6ac, 0 0 40px #4db6ac;
+            animation: glow 3s ease-in-out infinite alternate;
+            margin-bottom: 20px;
+            letter-spacing: 3px;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 20px #4db6ac, 0 0 30px #4db6ac, 0 0 40px #4db6ac; }
+            to { text-shadow: 0 0 10px #4db6ac, 0 0 20px #4db6ac, 0 0 30px #4db6ac, 0 0 40px #4db6ac; }
+        }
+        
+        .subtitle {
+            font-size: 1.5rem;
+            color: #80cbc4;
+            font-style: italic;
+            opacity: 0;
+            animation: fadeInUp 2s ease-out 1s forwards;
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .stories-container, .legends-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .story-card, .legend-card {
+            background: rgba(26, 58, 58, 0.8);
+            border: 2px solid #4db6ac;
+            border-radius: 15px;
+            margin: 40px 0;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+            transform: translateY(50px);
+            opacity: 0;
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5), inset 0 0 30px rgba(77, 182, 172, 0.1);
+        }
+        
+        .story-card::before, .legend-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #4db6ac, #80cbc4, #4db6ac);
+            border-radius: 15px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        .story-card:hover::before, .legend-card:hover::before {
+            opacity: 0.3;
+        }
+        
+        .story-card.visible, .legend-card.visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .story-card:hover, .legend-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(77, 182, 172, 0.3), 0 0 50px rgba(0, 0, 0, 0.7), inset 0 0 50px rgba(77, 182, 172, 0.2);
+        }
+        
+        .story-title {
+            font-size: 2.5rem;
+            color: #4db6ac;
+            margin-bottom: 20px;
+            font-weight: 600;
+            position: relative;
+        }
+        
+        .story-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #4db6ac, #80cbc4);
+            transition: width 0.8s ease;
+        }
+        
+        .story-card:hover .story-title::after {
+            width: 100%;
+        }
+        
+        .story-text {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: #b2dfdb;
+            text-align: left; /* Changed from justify to left */
+        }
+        
+        .story-text::first-letter {
+            float: left;
+            font-size: 4rem;
+            line-height: 3rem;
+            padding-right: 8px;
+            padding-top: 4px;
+            color: #4db6ac;
+            font-weight: bold;
+            text-shadow: 0 0 10px #4db6ac;
+        }
+        
+        .cat-silhouette {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: #4db6ac;
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: catBreathe 4s ease-in-out infinite;
+            z-index: 20;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cat-silhouette:hover {
+            opacity: 1;
+            transform: scale(1.1);
+            box-shadow: 0 0 20px #4db6ac;
+        }
+        
+        @keyframes catBreathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .menu-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            background: rgba(77, 182, 172, 0.2);
+            border: 1px solid #4db6ac;
+            color: #4db6ac;
+            padding: 10px 15px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .menu-toggle:hover {
+            background: rgba(77, 182, 172, 0.4);
+            transform: scale(1.05);
+        }
+        
+        .floating-menu {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            background: rgba(26, 58, 58, 0.95);
+            border: 1px solid #4db6ac;
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(15px);
+            transform: translateY(-20px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 99;
+        }
+        
+        .floating-menu.active {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .menu-item {
+            display: block;
+            color: #80cbc4;
+            text-decoration: none;
+            padding: 10px 0;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid rgba(77, 182, 172, 0.2);
+        }
+        
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+        
+        .menu-item:hover {
+            color: #4db6ac;
+            padding-left: 10px;
+        }
+        
+        /* Pagine aggiuntive */
+        .page-content {
+            display: none;
+        }
+        
+        .page-content.active {
+            display: block;
+        }
+        
+        /* Galleria */
+        .gallery-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 40px 0;
+        }
+        
+        .gallery-item {
+            position: relative;
+            height: 500px;
+            border-radius: 15px;
+            overflow: hidden;
+            background: rgba(26, 58, 58, 0.8);
+            border: 2px solid #4db6ac;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5), inset 0 0 30px rgba(77, 182, 172, 0.1);
+            transition: all 0.5s ease;
+            cursor: pointer;
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.5s ease;
+        }
+        
+        .gallery-item:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(77, 182, 172, 0.4), 0 0 50px rgba(0, 0, 0, 0.7);
+        }
+        
+        .gallery-item:hover img {
+            transform: scale(1.1);
+            filter: brightness(1.2) contrast(1.1);
+        }
+        
+        .gallery-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(77, 182, 172, 0.8), rgba(128, 203, 196, 0.6));
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-align: center;
+            padding: 15px;
+        }
+        
+        .gallery-item:hover .gallery-overlay {
+            opacity: 1;
+        }
+        
+        /* Form Contatti */
+        .contact-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .contact-form {
+            background: rgba(26, 58, 58, 0.8);
+            border: 2px solid #4db6ac;
+            border-radius: 15px;
+            padding: 40px;
+            max-width: 600px;
+            margin: 40px auto;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5), inset 0 0 30px rgba(77, 182, 172, 0.1);
+        }
+        
+        .contact-form h2 {
+            font-size: 2.5rem;
+            color: #4db6ac;
+            margin-bottom: 30px;
+            text-align: center;
+            font-family: 'Cinzel', serif;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            color: #80cbc4;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #4db6ac;
+            border-radius: 8px;
+            color: #e0f2f1;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: 'Crimson Text', serif;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #80cbc4;
+            box-shadow: 0 0 15px rgba(77, 182, 172, 0.5);
+            background: rgba(0, 0, 0, 0.5);
+        }
+        
+        .form-group textarea {
+            height: 150px;
+            resize: vertical;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #4db6ac, #80cbc4);
+            border: none;
+            border-radius: 8px;
+            color: #0a1a1a;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 1px;
+        }
+        
+        .submit-btn:hover {
+            background: linear-gradient(45deg, #80cbc4, #4db6ac);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(77, 182, 172, 0.4);
+        }
+        
+        /* Pulsante torna su */
+        .back-to-top {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: rgba(77, 182, 172, 0.7);
+            border: 1px solid #4db6ac;
+            border-radius: 50%;
+            color: #0a1a1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 20;
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .back-to-top:hover {
+            background: rgba(77, 182, 172, 0.9);
+            transform: translateY(-5px);
+        }
+        
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2.5rem;
+                letter-spacing: 2px;
+            }
+            
+            .story-card, .legend-card {
+                padding: 25px;
+                margin: 20px 0;
+            }
+            
+            .story-title {
+                font-size: 2rem;
+            }
+            
+            .story-text {
+                font-size: 1.1rem;
+            }
+            
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+            
+            .gallery-item {
+                height: 400px;
+            }
+            
+            .contact-form {
+                padding: 25px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .title {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .gallery-item {
+                height: 500px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-particles"></div>
+    
+    <div class="menu-toggle" onclick="toggleMenu()">☰ Menu</div>
+    
+    <div class="floating-menu" id="floatingMenu">
+        <a href="#" class="menu-item" onclick="showPage('stories')">Le Storie</a>
+        <a href="#" class="menu-item" onclick="showPage('gallery')">Galleria</a>
+        <a href="#" class="menu-item" onclick="showPage('legends')">Leggende</a>
+        <a href="#" class="menu-item" onclick="showPage('contact')">Contatti</a>
+    </div>
+    
+    <header>
+        <h1 class="title">Whispers in the Shadows</h1>
+        <p class="subtitle">Storie oscure di gatti e delle ragazze che li amano</p>
+    </header>
+    
+    <div class="page-content active" id="stories">
+        <div class="stories-container">
+            <div class="story-card">
+                <h2 class="story-title">La Guardiana della Notte</h2>
+                <p class="story-text">
+                    Elena aveva sempre saputo di essere diversa. I suoi occhi verdi brillavano nella penombra come quelli del suo fedele compagno, Ombra, un gatto nero dalle pupille color smeraldo. Ogni notte, mentre la città dormiva, lei e Ombra pattugliavano le strade nebbiose, proteggendo i segreti nascosti nell'oscurità. Le sussurravano storie antiche, di quando i gatti erano venerati come guardiani tra i mondi, e lei sentiva nel sangue la chiamata ancestrale. Non era solo una ragazza con un gatto: era la custode di un legame millenario, una guardiana nata per vegliare sui misteri che si celano tra le ombre.
+                </p>
+            </div>
+            
+            <div class="story-card">
+                <h2 class="story-title">Il Richiamo della Foresta Incantata</h2>
+                <p class="story-text">
+                    Nelle profondità della foresta di Thornwick, dove gli alberi sussurrano segreti antichi e la nebbia danza tra i rami, vive Seraphina. I suoi capelli scuri come la notte si fondono con l'oscurità del bosco, mentre i suoi occhi verdi riflettono la stessa luce magica di quelli di Whisper, il suo gatto dalle zampe silenziose. Insieme esplorano sentieri dimenticati, dove ogni passo risuona di magia antica. Seraphina può sentire i pensieri di Whisper, e lui conosce ogni suo desiderio prima ancora che lei lo esprima. Sono legati da un incantesimo che risale ai tempi in cui la magia scorreva libera per il mondo.
+                </p>
+            </div>
+            
+            <div class="story-card">
+                <h2 class="story-title">La Custode dei Sogni Perduti</h2>
+                <p class="story-text">
+                    Nelle ore più buie della notte, quando il velo tra i mondi si assottiglia, Morgana emerge dalla sua torre di cristallo nero. Con il suo gatto Midnight, dalle pupille come stelle cadenti, raccoglie i sogni perduti di coloro che hanno dimenticato come sognare. I suoi occhi verdi possono vedere attraverso le dimensioni, mentre Midnight cammina tra i sogni come se fosse la cosa più naturale del mondo. Insieme tessono nuove visioni per anime stanche, restituendo la speranza a chi l'aveva perduta. Il loro legame trascende il fisico: sono due anime gemelle che condividono il dono di navigare tra realtà e fantasia.
+                </p>
+            </div>
+            
+            <div class="story-card">
+                <h2 class="story-title">L'Ultima Strega di Salem</h2>
+                <p class="story-text">
+                    Raven è l'ultima discendente delle streghe di Salem, e porta nel sangue secoli di saggezza e potere. Il suo famiglio, Shadow, un gatto dalle striature misteriose e gli occhi che cambiano colore con le fasi lunari, è più di un semplice compagno: è il guardiano della sua anima. Insieme praticano le arti antiche in segreto, proteggendo il mondo da forze che la maggior parte delle persone non può nemmeno immaginare. Quando la luna è piena, i loro poteri si amplificano, e possono sentire il richiamo di ogni creatura magica nel raggio di miglia. Il loro amore reciproco è la fonte della loro magia più potente.
+                </p>
+            </div>
+            
+            <div class="story-card">
+                <h2 class="story-title">La Melodia del Crepuscolo</h2>
+                <p class="story-text">
+                    Nell'ora del crepuscolo, quando il giorno si fonde con la notte, Luna suona il suo violino sul tetto della cattedrale gotica. Le note danzano nell'aria come spiriti, mentre Echo, il suo gatto dalle orecchie appuntite e gli occhi color ambra, fa da coro con le sue fusa melodiose. La loro musica ha il potere di guarire cuori spezzati e di risvegliare ricordi perduti. Chi li ascolta dice di sentire echi di vite passate, di amori eterni e di promesse non mantenute. Luna ed Echo sono messaggeri dell'aldilà, portatori di pace per le anime inquiete che vagliano ancora tra i vivi.
+                </p>
+            </div>
+
+            <div class="story-card">
+                <h2 class="story-title">Il Sussurro delle Stelle Cadenti</h2>
+                <p class="story-text">
+                    Anya viveva in un piccolo villaggio di montagna, dove le notti erano così limpide che le stelle sembravano cadere dal cielo. Il suo gatto, Orion, aveva il manto costellato di punti bianchi, come una minuscola galassia. Ogni volta che una stella cadeva, Orion la catturava con uno sguardo, e Anya sentiva un fremito di conoscenza attraversarla. Insieme, impararono a decifrare i messaggi celesti, a prevedere i cambiamenti del tempo e a trovare oggetti smarriti. Si diceva che fossero la voce delle stelle, sussurrando segreti cosmici a chi avesse il cuore abbastanza aperto per ascoltare.
+                </p>
+            </div>
+
+            <div class="story-card">
+                <h2 class="story-title">L'Eco del Tempio Sommerso</h2>
+                <p class="story-text">
+                    Nelle profondità dell'oceano, dove antiche rovine giacciono silenziose, vive Coralia. I suoi capelli ondosi rispecchiano i colori del mare, e i suoi occhi sono profondi come l'abisso. Il suo gatto, Marea, è una creatura di pura energia acquatica, capace di nuotare attraverso le rocce come fossero acqua. Insieme, esplorano templi sommersi, recuperando manufatti perduti e proteggendo le creature marine da pericoli invisibili. Coralia può comunicare con Marea attraverso il pensiero, e il loro legame è forte come la marea che governa gli oceani.
+                </p>
+            </div>
+
+            <div class="story-card">
+                <h2 class="story-title">La Tessitrice di Incantesimi Silenziosi</h2>
+                <p class="story-text">
+                    Nel cuore di un bosco secolare, avvolto in una nebbia perpetua, c'è un'antica quercia dove risiede Elara. I suoi gesti sono lenti e aggraziati, e il suo gatto, Rune, è il suo inseparabile compagno, un felino dal pelo grigio cenere e occhi che sembrano cristalli intagliati. Elara e Rune non parlano con le parole, ma con un linguaggio di incantesimi silenziosi, tessendo magie attraverso i movimenti delle loro mani e le fusa profonde di Rune. Creano amuleti di protezione, infondono forza nella natura e curano le ferite invisibili dell'anima. La loro magia è sottile ma potente, un sussurro che cambia il mondo.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="page-content" id="gallery">
+        <div class="gallery-container">
+            <h2 class="story-title" style="text-align: center; margin-bottom: 40px;">Galleria delle Ombre</h2>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="images/cat-girl-1.jpg" alt="Mysterious Cat Girl 1" loading="lazy">
+                    <div class="gallery-overlay">Guardiana Notturna</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="images/cat-girl-2.jpg" alt="Mysterious Cat Girl 2" loading="lazy">
+                    <div class="gallery-overlay">Spirito della Foresta</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="images/cat-girl-3.jpg" alt="Mysterious Cat Girl 3" loading="lazy">
+                    <div class="gallery-overlay">Custode dei Sogni</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="images/cat-girl-4.jpg" alt="Mysterious Cat Girl 4" loading="lazy">
+                    <div class="gallery-overlay">Strega Moderna</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="images/cat-girl-5.jpg" alt="Mysterious Cat Girl 5" loading="lazy">
+                    <div class="gallery-overlay">Melodia Lunare</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="images/cat-girl-6.jpg" alt="Mysterious Cat Girl 6" loading="lazy">
+                    <div class="gallery-overlay">Ombra Silenziosa</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="images/cat-girl-7.jpg" alt="Mysterious Cat Girl 7" loading="lazy">
+                    <div class="gallery-overlay">Cacciatrice di Stelle</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="images/cat-girl-8.jpg" alt="Mysterious Cat Girl 8" loading="lazy">
+                    <div class="gallery-overlay">Regina delle Tenebre</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="images/cat-girl-9.jpg" alt="Mysterious Cat Girl 9" loading="lazy">
+                    <div class="gallery-overlay">Tessitrice di Incantesimi</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="images/cat-girl-10.jpg" alt="Mysterious Cat Girl 10" loading="lazy">
+                    <div class="gallery-overlay">Guardiana Ancestrale</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="images/cat-girl-11.jpg" alt="Mysterious Cat Girl 11" loading="lazy">
+                    <div class="gallery-overlay">Dama del Crepuscolo</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="images/cat-girl-12.jpg" alt="Mysterious Cat Girl 12" loading="lazy">
+                    <div class="gallery-overlay">Signora dei Misteri</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="page-content" id="legends">
+        <div class="legends-container">
+            <h2 class="story-title" style="text-align: center; margin-bottom: 40px;">Leggende Antiche</h2>
+            
+            <div class="legend-card">
+                <h3 class="story-title" style="font-size: 2rem;">Il Patto delle Nove Vite</h3>
+                <p class="story-text">
+                    Si narra che anticamente, quando il mondo era giovane e la magia scorreva libera come fiumi di stelle, esistesse un patto sacro tra le donne dotate di poteri e i gatti dalle pupille di cristallo. Ogni gatto poteva condividere le sue nove vite con una prescelta, garantendole immortalità e saggezza infinita. In cambio, la donna doveva proteggere i segreti del regno felino e vegliare sui confini tra i mondi. Solo poche elette riuscirono a siglare questo patto, diventando leggendarie guardiane dell'equilibrio cosmico.
+                </p>
+            </div>
+            
+            <div class="legend-card">
+                <h3 class="story-title" style="font-size: 2rem;">La Profezia della Luna Nera</h3>
+                <p class="story-text">
+                    Durante la notte di luna nera, quando il satellite terrestre scompare completamente dal cielo, si dice che nasca una bambina destinata a diventare la Regina delle Ombre. Il suo famiglio, un gatto dalle zampe argentate e gli occhi che riflettono galassie lontane, la troverà prima del suo sedicesimo compleanno. Insieme, dovranno affrontare una scelta che determinerà il destino di entrambi i mondi: quello dei vivi e quello degli spiriti. La leggenda sussurra che questa prescelta possiede il potere di aprire o chiudere per sempre i portali dimensionali.
+                </p>
+            </div>
+            
+            <div class="legend-card">
+                <h3 class="story-title" style="font-size: 2rem;">I Custodi del Tempo Perduto</h3>
+                <p class="story-text">
+                    Nelle biblioteche dimenticate del tempo, dove i libri scrivono se stessi e le pagine sussurrano verità nascoste, vivono le Custodi del Tempo Perduto. Sono donne dai capelli color nebbia e gatti che camminano attraverso i secoli come se fossero semplici stanze. Il loro compito è preservare i momenti che il mondo ha dimenticato: l'ultimo respiro di una civiltà perduta, il primo sorriso di un amore eterno, le parole non dette che avrebbero cambiato la storia. Chi incontra una Custode dice di aver sentito l'eco di tutte le vite mai vissute.
+                </p>
+            </div>
+
+            <div class="legend-card">
+                <h3 class="story-title" style="font-size: 2rem;">Il Sonno del Drago Smeraldo</h3>
+                <p class="story-text">
+                    Si narra che sotto le radici del mondo giaccia un drago di smeraldo, la cui vita è intrecciata con quella di tutti i felini. Quando il drago dorme, i gatti camminano in silenzio, assorbendo la sua energia onirica. Una volta ogni millennio, una giovane donna con un legame puro con i gatti può risvegliare il drago con una melodia segreta, sbloccando così una nuova era di prosperità e magia per il mondo. Il suo famiglio, un gatto dalle scaglie iridescenti, è la chiave per trovare la melodia perduta.
+                </p>
+            </div>
+
+            <div class="legend-card">
+                <h3 class="story-title" style="font-size: 2rem;">Lo Specchio delle Anime Gemelle</h3>
+                <p class="story-text">
+                    Esiste uno specchio antico, forgiato con la luce della prima luna, che riflette non l'immagine, ma l'anima più profonda di chi lo guarda. Si dice che solo una ragazza e il suo gatto, le cui anime sono così legate da essere una sola, possano vedere il vero riflesso: il futuro che li attende, le sfide che dovranno superare e la loro missione nel mondo. Coloro che hanno osato guardare, e sono stati ritenuti degni, hanno ricevuto visioni che hanno cambiato il corso della storia, sempre guidati dal loro fedele compagno felino.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="page-content" id="contact">
+        <div class="contact-container">
+            <div class="contact-form">
+                <h2>Racconta la tua Storia</h2>
+                <form action="https://api.web3forms.com/submit" method="POST">
+    <input type="hidden" name="access_key" value="7f68582f-139b-445c-9aa5-d0c093e4bec7">
+    <input type="hidden" name="redirect" value="https://mrrearm.github.io/darktheme/grazie.html">
+    <input type="checkbox" name="botcheck" style="display:none">
+                    <div class="form-group">
+                        <label for="name">Nome</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">E-mail</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="story">La tua Storia</label>
+                        <textarea id="story" name="story" placeholder="Condividi la tua storia misteriosa, il tuo legame speciale con un gatto, o una leggenda che conosci..." required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Invia la tua Storia</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="cat-silhouette" onclick="addMagicalEffect()" title="Clicca per un tocco di magia"></div>
+    
+    <div class="back-to-top" onclick="scrollToTop()" title="Torna su">↑</div>
+    
+    <script>
+        // Crea particelle fluttuanti
+        function createFloatingParticles() {
+            const container = document.querySelector('.floating-particles');
+            const particleCount = 50;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                container.appendChild(particle);
+            }
+        }
+        
+        // Osservatore per animazioni al scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+        
+        // Menu toggle
+        function toggleMenu() {
+            const menu = document.getElementById('floatingMenu');
+            menu.classList.toggle('active');
+        }
+        
+        // Mostra pagina specifica
+        function showPage(pageId) {
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+            toggleMenu();
+            
+            // Osserva gli elementi della nuova pagina
+            setTimeout(() => {
+                document.querySelectorAll('.story-card, .legend-card').forEach(card => {
+                    observer.observe(card);
+                });
+            }, 100);
+            
+            // Scrolla in alto
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // Effetto magico al click del gatto
+        function addMagicalEffect() {
+            const colors = ['#4db6ac', '#80cbc4', '#a7ffeb', '#b2dfdb'];
+            const body = document.body;
+            
+            for (let i = 0; i < 10; i++) {
+                const spark = document.createElement('div');
+                spark.style.position = 'fixed';
+                spark.style.right = Math.random() * 100 + 'px';
+                spark.style.bottom = Math.random() * 100 + 'px';
+                spark.style.width = Math.random() * 6 + 4 + 'px';
+                spark.style.height = spark.style.width;
+                spark.style.background = colors[Math.floor(Math.random() * colors.length)];
+                spark.style.borderRadius = '50%';
+                spark.style.pointerEvents = 'none';
+                spark.style.zIndex = '1000';
+                spark.style.animation = 'sparkle 2s ease-out forwards';
+                
+                body.appendChild(spark);
+                
+                setTimeout(() => {
+                    spark.remove();
+                }, 2000);
+            }
+        }
+        
+        // Aggiungi keyframes per l'effetto sparkle
+        const sparkleStyle = document.createElement('style');
+        sparkleStyle.textContent = `
+            @keyframes sparkle {
+                0% { 
+                    opacity: 1; 
+                    transform: scale(0) rotate(0deg); 
+                }
+                50% { 
+                    opacity: 1; 
+                    transform: scale(1) rotate(180deg); 
+                }
+                100% { 
+                    opacity: 0; 
+                    transform: scale(0) rotate(360deg) translateY(-100px); 
+                }
+            }
+        `;
+        document.head.appendChild(sparkleStyle);
+
+        // Torna su
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // Mostra/nascondi pulsante torna su
+        window.addEventListener('scroll', () => {
+            const backToTop = document.querySelector('.back-to-top');
+            if (window.pageYOffset > 300) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+        
+        // Inizializza al caricamento della pagina
+        window.addEventListener('load', () => {
+            createFloatingParticles();
+            
+            // Osserva tutte le story cards
+            document.querySelectorAll('.story-card, .legend-card').forEach(card => {
+                observer.observe(card);
+            });
+        });
+        
+        // Chiudi menu quando si clicca fuori
+        document.addEventListener('click', (e) => {
+            const menu = document.getElementById('floatingMenu');
+            const toggle = document.querySelector('.menu-toggle');
+            
+            if (!menu.contains(e.target) && !toggle.contains(e.target)) {
+                menu.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
